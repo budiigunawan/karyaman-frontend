@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import {
   Flex,
   Box,
@@ -13,11 +12,9 @@ import {
 } from "@chakra-ui/react";
 
 const Login = () => {
-  const formRef = useRef(null);
-
   const handleLogin = (e) => {
     e.preventDefault();
-    const formData = new FormData(formRef.current);
+    const formData = new FormData(e.currentTarget);
     const email = formData.get("email");
     const password = formData.get("password");
     console.log({ email, password }, "login payload");
@@ -43,7 +40,7 @@ const Login = () => {
           boxShadow={"lg"}
           p={8}
         >
-          <form onSubmit={handleLogin} ref={formRef}>
+          <form onSubmit={handleLogin}>
             <Stack spacing={4}>
               <FormControl id='email'>
                 <FormLabel>Email address</FormLabel>

@@ -1,5 +1,11 @@
+import Layout from "../components/Layout";
+
 const Attendance = () => {
-  return <div>Attendance</div>;
+  return (
+    <Layout>
+      <h1>Attendance</h1>
+    </Layout>
+  );
 };
 
 export default Attendance;

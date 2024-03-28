@@ -13,7 +13,7 @@ Karyaman is Employee Management System.
 
 ### Attendance Management
 
-- Checkin and checkout attendance for employee
+- Manage employee attendance
 
 ## Tech Stack
 

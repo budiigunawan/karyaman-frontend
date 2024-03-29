@@ -3,6 +3,7 @@ import { usePagination } from "@ajna/pagination";
 import Layout from "../components/Layout";
 import TablePagination from "../components/Tables/TablePagination";
 import TableAttendance from "../components/Tables/TableAttendance";
+import { FaPlus } from "react-icons/fa6";
 
 const Attendance = () => {
   const {
@@ -74,7 +75,9 @@ const Attendance = () => {
           <Text as='h2' fontWeight='bold' fontSize='large'>
             Attendace Table
           </Text>
-          <Button colorScheme='blue'>Add Presence</Button>
+          <Button leftIcon={<FaPlus />} colorScheme='blue'>
+            Attendance
+          </Button>
         </HStack>
         <TableAttendance data={attendanceData} />
         <TablePagination

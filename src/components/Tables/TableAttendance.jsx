@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   TableContainer,
   Table,
@@ -16,13 +16,22 @@ import {
 import { MdLocationPin } from "react-icons/md";
 import { IoExit } from "react-icons/io5";
 import ModalAttendance from "../Modals/ModalAttendance";
+import ModalPoint from "../Modals/ModalPoint";
 
 const TableAttendance = ({ data }) => {
   const [clockOutAttendance, setClockOutAttendance] = useState({});
+  const [pointAttendance, setPointAttendance] = useState({});
+  const cancelRef = useRef();
+
   const {
     isOpen: isOpenModalClockOutAttendance,
     onOpen: onOpenModalClockOutAttendance,
     onClose: onCloseModalClockOutAttendance,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenModalPoint,
+    onOpen: onOpenModalPoint,
+    onClose: onCloseModalPoint,
   } = useDisclosure();
 
   const handleOpenModalClockOutAttendace = (attendace) => {
@@ -33,6 +42,16 @@ const TableAttendance = ({ data }) => {
   const handleCloseModalClockOutAttendace = () => {
     setClockOutAttendance({});
     onCloseModalClockOutAttendance();
+  };
+
+  const handleOpenModalPoint = (attendace, type) => {
+    setPointAttendance({ type, ...attendace });
+    onOpenModalPoint();
+  };
+
+  const handleCloseModalPoint = () => {
+    setPointAttendance({});
+    onCloseModalPoint();
   };
 
   return (
@@ -67,6 +86,7 @@ const TableAttendance = ({ data }) => {
                       title='point in'
                       colorScheme='blue'
                       icon={<MdLocationPin />}
+                      onClick={() => handleOpenModalPoint(attendace, "in")}
                     />
                   ) : (
                     ""
@@ -83,6 +103,7 @@ const TableAttendance = ({ data }) => {
                       title='point out'
                       colorScheme='blue'
                       icon={<MdLocationPin />}
+                      onClick={() => handleOpenModalPoint(attendace, "out")}
                     />
                   ) : (
                     "-"
@@ -107,6 +128,12 @@ const TableAttendance = ({ data }) => {
         isOpen={isOpenModalClockOutAttendance}
         onClose={handleCloseModalClockOutAttendace}
         data={clockOutAttendance}
+      />
+      <ModalPoint
+        isOpen={isOpenModalPoint}
+        cancelRef={cancelRef}
+        onClose={handleCloseModalPoint}
+        data={pointAttendance}
       />
     </>
   );

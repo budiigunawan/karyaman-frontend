@@ -20,19 +20,12 @@ import {
   MenuList,
   Link,
 } from "@chakra-ui/react";
-import {
-  FiHome,
-  FiMenu,
-  FiChevronDown,
-  FiUsers,
-  FiWatch,
-} from "react-icons/fi";
+import { FiMenu, FiChevronDown, FiUsers, FiWatch } from "react-icons/fi";
 import Logo from "../assets/logo.png";
 
 const LinkItems = [
-  { name: "Dashboard", href: "/dashboard", icon: FiHome },
-  { name: "Employee", href: "/employee", icon: FiUsers },
   { name: "Attendance", href: "/attendance", icon: FiWatch },
+  { name: "Employee", href: "/employee", icon: FiUsers },
 ];
 
 const SidebarContent = ({ onClose, ...rest }) => {

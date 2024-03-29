@@ -43,10 +43,14 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleCapturePhoto = useCallback(() => {
+  const handleTakePhoto = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
   }, [webcamRef, setImgSrc]);
+
+  const handleRemovePhoto = () => {
+    setImgSrc(null);
+  };
 
   const handleCreateAttendance = () => {
     console.log(position, "position");
@@ -64,7 +68,6 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
       closeOnOverlayClick={false}
       isOpen={isOpen}
       onClose={handleCloseModal}
-      size='lg'
     >
       <ModalOverlay />
       <ModalContent>
@@ -74,29 +77,40 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
           <Stack spacing={4}>
             <Stack>
               <Text>Please take a photo</Text>
-              <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat='image/jpeg'
-              />
-              <Button size='sm' colorScheme='blue' onClick={handleCapturePhoto}>
-                Capture Photo
-              </Button>
-              {imgSrc && (
+              {imgSrc ? (
                 <>
-                  <Text>Photo result:</Text>
                   <Box>
                     <Image src={imgSrc} />
                   </Box>
+                  <Button
+                    size='sm'
+                    colorScheme='red'
+                    onClick={handleRemovePhoto}
+                  >
+                    Retake Photo
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Webcam
+                    audio={false}
+                    ref={webcamRef}
+                    screenshotFormat='image/jpeg'
+                  />
+                  <Button
+                    size='sm'
+                    colorScheme='blue'
+                    onClick={handleTakePhoto}
+                  >
+                    Take Photo
+                  </Button>
                 </>
               )}
             </Stack>
             <Stack>
-              <Button size='sm' colorScheme='blue' onClick={getPosition}>
-                Get Position
-              </Button>
-              {position && (
+              {position ? (
                 <Box>
+                  <Text>Position:</Text>
                   <MapContainer
                     center={position}
                     zoom={16}
@@ -112,6 +126,10 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
                     </Marker>
                   </MapContainer>
                 </Box>
+              ) : (
+                <Button size='sm' colorScheme='blue' onClick={getPosition}>
+                  Get Position
+                </Button>
               )}
             </Stack>
             {errorMessage && <Text color='red'>{errorMessage}</Text>}

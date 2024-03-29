@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import {
   TableContainer,
   Table,
@@ -10,11 +11,31 @@ import {
   Text,
   Avatar,
   IconButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { MdLocationPin } from "react-icons/md";
 import { IoExit } from "react-icons/io5";
+import ModalClockOutAttendance from "../Modals/ModalClockOutAttendance";
 
 const TableAttendance = ({ data }) => {
+  const cancelRef = useRef();
+  const [clockOutAttendance, setClockOutAttendance] = useState({});
+  const {
+    isOpen: isOpenModalClockOutAttendance,
+    onOpen: onOpenModalClockOutAttendance,
+    onClose: onCloseModalClockOutAttendance,
+  } = useDisclosure();
+
+  const handleOpenModalClockOutAttendace = (attendace) => {
+    setClockOutAttendance(attendace);
+    onOpenModalClockOutAttendance();
+  };
+
+  const handleCloseModalClockOutAttendace = () => {
+    setClockOutAttendance({});
+    onCloseModalClockOutAttendance();
+  };
+
   return (
     <>
       <TableContainer>
@@ -74,6 +95,7 @@ const TableAttendance = ({ data }) => {
                     colorScheme='red'
                     icon={<IoExit />}
                     variant='outline'
+                    onClick={() => handleOpenModalClockOutAttendace(attendace)}
                     isDisabled={!!attendace.clockOut}
                   />
                 </Td>
@@ -82,6 +104,12 @@ const TableAttendance = ({ data }) => {
           </Tbody>
         </Table>
       </TableContainer>
+      <ModalClockOutAttendance
+        isOpen={isOpenModalClockOutAttendance}
+        cancelRef={cancelRef}
+        onClose={handleCloseModalClockOutAttendace}
+        data={clockOutAttendance}
+      />
     </>
   );
 };

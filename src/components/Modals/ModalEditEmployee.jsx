@@ -14,11 +14,11 @@ import {
   Stack,
 } from "@chakra-ui/react";
 
-const ModalCreateEmployee = ({ isOpen, onClose }) => {
-  const handleCreateEmployee = (e) => {
+const ModalEditEmployee = ({ data, isOpen, onClose }) => {
+  const handleEditEmployee = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const name = formData.get("fullName");
+    const fullName = formData.get("fullName");
     const role = formData.get("role");
     const employed = new Date(formData.get("employed")).toISOString();
     const email = formData.get("email");
@@ -26,7 +26,7 @@ const ModalCreateEmployee = ({ isOpen, onClose }) => {
     const isAdmin = formData.get("access");
 
     const employeePayload = {
-      name,
+      fullName,
       role,
       employed,
       email,
@@ -42,9 +42,9 @@ const ModalCreateEmployee = ({ isOpen, onClose }) => {
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Add new employee</ModalHeader>
+        <ModalHeader>Edit employee</ModalHeader>
         <ModalCloseButton />
-        <form onSubmit={handleCreateEmployee}>
+        <form onSubmit={handleEditEmployee}>
           <ModalBody pb={6}>
             <Stack spacing={4}>
               <FormControl id='fullName'>
@@ -52,6 +52,7 @@ const ModalCreateEmployee = ({ isOpen, onClose }) => {
                 <Input
                   type='text'
                   name='fullName'
+                  defaultValue={data?.name}
                   placeholder='John Doe'
                   required
                 />
@@ -61,6 +62,7 @@ const ModalCreateEmployee = ({ isOpen, onClose }) => {
                 <Input
                   type='email'
                   name='email'
+                  defaultValue={data?.email}
                   placeholder='johndoe@mail.com'
                   required
                 />
@@ -71,17 +73,27 @@ const ModalCreateEmployee = ({ isOpen, onClose }) => {
                   type='tel'
                   pattern='^\+?\d*$'
                   name='phone'
+                  defaultValue={data?.phone}
                   placeholder='+62123456789'
                   required
                 />
               </FormControl>
               <FormControl id='employed'>
                 <FormLabel>Hired Date</FormLabel>
-                <Input type='date' name='employed' />
+                <Input
+                  type='date'
+                  name='employed'
+                  defaultValue={data?.employed?.substring(0, 10)}
+                />
               </FormControl>
               <FormControl id='role'>
                 <FormLabel>Role</FormLabel>
-                <Select name='role' placeholder='Select role' required>
+                <Select
+                  name='role'
+                  defaultValue={data?.role}
+                  placeholder='Select role'
+                  required
+                >
                   <option value='programmer'>Programmer</option>
                   <option value='hr'>HR</option>
                   <option value='finance'>Finance</option>
@@ -89,9 +101,26 @@ const ModalCreateEmployee = ({ isOpen, onClose }) => {
               </FormControl>
               <FormControl id='access'>
                 <FormLabel>Access</FormLabel>
-                <Select name='access' placeholder='Select access' required>
+                <Select
+                  name='access'
+                  defaultValue={data?.isAdmin}
+                  placeholder='Select access'
+                  required
+                >
                   <option value='false'>User</option>
                   <option value='true'>Admin</option>
+                </Select>
+              </FormControl>
+              <FormControl id='status'>
+                <FormLabel>Access</FormLabel>
+                <Select
+                  name='status'
+                  defaultValue={data?.isActive}
+                  placeholder='Select user status'
+                  required
+                >
+                  <option value='true'>Active</option>
+                  <option value='false'>Inactive</option>
                 </Select>
               </FormControl>
             </Stack>
@@ -108,4 +137,4 @@ const ModalCreateEmployee = ({ isOpen, onClose }) => {
   );
 };
 
-export default ModalCreateEmployee;
+export default ModalEditEmployee;

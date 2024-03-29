@@ -20,6 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import ModalDeleteEmployee from "../Modals/ModalDeleteEmployee";
+import ModalEditEmployee from "../Modals/ModalEditEmployee";
 
 const TableEmployee = ({ data }) => {
   const {
@@ -27,8 +28,15 @@ const TableEmployee = ({ data }) => {
     onOpen: onOpenModalDeleteEmployee,
     onClose: onCloseModalDeleteEmployee,
   } = useDisclosure();
+  const {
+    isOpen: isOpenModalEditEmployee,
+    onOpen: onOpenModalEditEmployee,
+    onClose: onCloseModalEditEmployee,
+  } = useDisclosure();
+
   const cancelRef = useRef();
   const [deletedEmployeeId, setDeletedEmployeeId] = useState("");
+  const [editedEmployee, setEditedEmployee] = useState({});
 
   const handleOpenModalDeleteEmployee = (employeeId) => {
     setDeletedEmployeeId(employeeId);
@@ -38,6 +46,16 @@ const TableEmployee = ({ data }) => {
   const handleCloseModalDeleteEmployee = () => {
     setDeletedEmployeeId("");
     onCloseModalDeleteEmployee();
+  };
+
+  const handleOpenModalEditEmployee = (data) => {
+    setEditedEmployee(data);
+    onOpenModalEditEmployee();
+  };
+
+  const handleCloseModalEditEmployee = () => {
+    setEditedEmployee({});
+    onCloseModalEditEmployee();
   };
 
   return (
@@ -86,7 +104,11 @@ const TableEmployee = ({ data }) => {
                       variant='outline'
                     />
                     <MenuList>
-                      <MenuItem>Edit</MenuItem>
+                      <MenuItem
+                        onClick={() => handleOpenModalEditEmployee(employee)}
+                      >
+                        Edit
+                      </MenuItem>
                       <MenuItem
                         onClick={() =>
                           handleOpenModalDeleteEmployee(employee.id)
@@ -107,6 +129,11 @@ const TableEmployee = ({ data }) => {
         cancelRef={cancelRef}
         onClose={handleCloseModalDeleteEmployee}
         employeeId={deletedEmployeeId}
+      />
+      <ModalEditEmployee
+        data={editedEmployee}
+        isOpen={isOpenModalEditEmployee}
+        onClose={handleCloseModalEditEmployee}
       />
     </>
   );

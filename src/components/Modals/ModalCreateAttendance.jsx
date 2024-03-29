@@ -14,16 +14,30 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Webcam from "react-webcam";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import icon from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
+import "leaflet/dist/leaflet.css";
 
 const ModalCreateAttendance = ({ isOpen, onClose }) => {
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
-  const [location, setLocation] = useState(null);
+  const [position, setPosition] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const getLocation = () => {
+  const DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow,
+  });
+
+  L.Marker.prototype.options.icon = DefaultIcon;
+
+  const getPosition = () => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((loc) => setLocation(loc));
+      navigator.geolocation.getCurrentPosition((result) =>
+        setPosition([result.coords.latitude, result.coords.longitude])
+      );
     } else {
       setErrorMessage("Geolocation is not supported by this browser");
     }
@@ -35,13 +49,13 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
   }, [webcamRef, setImgSrc]);
 
   const handleCreateAttendance = () => {
-    console.log(location, "location");
+    console.log(position, "position");
     console.log(imgSrc, "image");
   };
 
   const handleCloseModal = () => {
     setImgSrc(null);
-    setLocation(null);
+    setPosition(null);
     onClose();
   };
 
@@ -50,6 +64,7 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
       closeOnOverlayClick={false}
       isOpen={isOpen}
       onClose={handleCloseModal}
+      size='lg'
     >
       <ModalOverlay />
       <ModalContent>
@@ -77,11 +92,26 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
               )}
             </Stack>
             <Stack>
-              <Button size='sm' colorScheme='blue' onClick={getLocation}>
-                Get Location
+              <Button size='sm' colorScheme='blue' onClick={getPosition}>
+                Get Position
               </Button>
-              {location && (
-                <Text>{`Lat: ${location.coords.latitude} Lng: ${location.coords.longitude}`}</Text>
+              {position && (
+                <Box>
+                  <MapContainer
+                    center={position}
+                    zoom={16}
+                    scrollWheelZoom={false}
+                    style={{ height: "348px" }}
+                  >
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                    />
+                    <Marker position={position}>
+                      <Popup>Your Position</Popup>
+                    </Marker>
+                  </MapContainer>
+                </Box>
               )}
             </Stack>
             {errorMessage && <Text color='red'>{errorMessage}</Text>}
@@ -93,7 +123,7 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
             onClick={handleCreateAttendance}
             colorScheme='blue'
             mr={3}
-            isDisabled={!(imgSrc && location)}
+            isDisabled={!(imgSrc && position)}
           >
             Save
           </Button>

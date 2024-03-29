@@ -10,7 +10,7 @@ function App() {
       <Routes>
         <Route path='dashboard' element={<Dashboard />} />
         <Route path='employee' element={<Employee />} />
-        <Route path='attendace' element={<Attendance />} />
+        <Route path='attendance' element={<Attendance />} />
         <Route path='login' element={<Login />} />
         <Route path='/' element={<Navigate to='dashboard' replace />} />
       </Routes>

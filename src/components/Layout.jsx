@@ -20,11 +20,12 @@ import {
   MenuList,
   Link,
 } from "@chakra-ui/react";
-import { FiMenu, FiChevronDown, FiUsers, FiWatch } from "react-icons/fi";
+import { FiMenu, FiChevronDown, FiUsers } from "react-icons/fi";
+import { BsClockHistory } from "react-icons/bs";
 import Logo from "../assets/logo.png";
 
 const LinkItems = [
-  { name: "Attendance", href: "/attendance", icon: FiWatch },
+  { name: "Attendance", href: "/attendance", icon: BsClockHistory },
   { name: "Employee", href: "/employee", icon: FiUsers },
 ];
 
@@ -81,7 +82,7 @@ const NavItem = ({ href, icon, children, ...rest }) => {
         role='group'
         cursor='pointer'
         _hover={{
-          bg: "cyan.400",
+          bg: "blue.400",
           color: "white",
         }}
         {...rest}

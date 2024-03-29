@@ -4,7 +4,7 @@ import Layout from "../components/Layout";
 import TablePagination from "../components/Tables/TablePagination";
 import TableAttendance from "../components/Tables/TableAttendance";
 import { FaPlus } from "react-icons/fa6";
-import ModalCreateAttendance from "../components/Modals/ModalCreateAttendance";
+import ModalAttendance from "../components/Modals/ModalAttendance";
 
 const Attendance = () => {
   const {
@@ -105,7 +105,7 @@ const Attendance = () => {
           onPageSizeChange={handlePageSizeChange}
         />
       </Box>
-      <ModalCreateAttendance
+      <ModalAttendance
         isOpen={isOpenModalCreateAttendance}
         onClose={onCloseModalCreateAttendance}
       />

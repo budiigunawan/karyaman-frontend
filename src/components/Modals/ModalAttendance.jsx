@@ -20,7 +20,7 @@ import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 
-const ModalCreateAttendance = ({ isOpen, onClose }) => {
+const ModalAttendance = ({ isOpen, onClose, data = null }) => {
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
   const [position, setPosition] = useState(null);
@@ -57,6 +57,20 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
     console.log(imgSrc, "image");
   };
 
+  const handleClockOutAttendance = () => {
+    console.log(data, "target attendance");
+    console.log(position, "position");
+    console.log(imgSrc, "image");
+  };
+
+  const handleSave = () => {
+    if (data) {
+      handleClockOutAttendance();
+    } else {
+      handleCreateAttendance();
+    }
+  };
+
   const handleCloseModal = () => {
     setImgSrc(null);
     setPosition(null);
@@ -71,7 +85,9 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Add new attendance</ModalHeader>
+        <ModalHeader>
+          {data ? "Clock out attendance" : "Add new attendance"}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <Stack spacing={4}>
@@ -138,7 +154,7 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
         <ModalFooter>
           <Button
             type='button'
-            onClick={handleCreateAttendance}
+            onClick={handleSave}
             colorScheme='blue'
             mr={3}
             isDisabled={!(imgSrc && position)}
@@ -152,4 +168,4 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
   );
 };
 
-export default ModalCreateAttendance;
+export default ModalAttendance;

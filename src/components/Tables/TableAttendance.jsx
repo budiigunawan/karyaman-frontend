@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   TableContainer,
   Table,
@@ -15,10 +15,9 @@ import {
 } from "@chakra-ui/react";
 import { MdLocationPin } from "react-icons/md";
 import { IoExit } from "react-icons/io5";
-import ModalClockOutAttendance from "../Modals/ModalClockOutAttendance";
+import ModalAttendance from "../Modals/ModalAttendance";
 
 const TableAttendance = ({ data }) => {
-  const cancelRef = useRef();
   const [clockOutAttendance, setClockOutAttendance] = useState({});
   const {
     isOpen: isOpenModalClockOutAttendance,
@@ -104,9 +103,8 @@ const TableAttendance = ({ data }) => {
           </Tbody>
         </Table>
       </TableContainer>
-      <ModalClockOutAttendance
+      <ModalAttendance
         isOpen={isOpenModalClockOutAttendance}
-        cancelRef={cancelRef}
         onClose={handleCloseModalClockOutAttendace}
         data={clockOutAttendance}
       />

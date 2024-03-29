@@ -1,26 +1,68 @@
-import {
-  TableContainer,
-  Table,
-  Tbody,
-  Th,
-  Thead,
-  Tr,
-  Td,
-  Flex,
-  Box,
-  Text,
-  Avatar,
-  Tag,
-  Menu,
-  MenuButton,
-  IconButton,
-  MenuList,
-  MenuItem,
-} from "@chakra-ui/react";
-import { BsThreeDotsVertical } from "react-icons/bs";
+import { Flex, Box, Text } from "@chakra-ui/react";
+import { usePagination } from "@ajna/pagination";
 import Layout from "../components/Layout";
+import TableEmployee from "../components/Tables/TableEmployee";
+import TablePagination from "../components/Tables/TablePagination";
 
 const Employee = () => {
+  const {
+    pages,
+    pagesCount,
+    // offset,
+    currentPage,
+    setCurrentPage,
+    // pageSize,
+    setPageSize,
+  } = usePagination({
+    total: 0,
+    limits: {
+      outer: 1,
+      inner: 1,
+    },
+    initialState: {
+      pageSize: 10,
+      currentPage: 1,
+    },
+  });
+
+  const handlePageChange = (nextPage) => {
+    setCurrentPage(nextPage);
+  };
+
+  const handlePageSizeChange = (newPageSize) => {
+    setPageSize(newPageSize);
+  };
+
+  const employeeData = [
+    {
+      id: "1",
+      name: "John Doe",
+      role: "Programmer",
+      isActive: true,
+      employed: "2020-07-31T03:24:00",
+      email: "johndoe@mail.com",
+      phone: "+62123456789",
+    },
+    {
+      id: "2",
+      name: "Jessica Jane",
+      role: "Programmer",
+      isActive: false,
+      employed: "2020-07-31T03:24:00",
+      email: "jessicajane@mail.com",
+      phone: "+62123456789",
+    },
+    {
+      id: "3",
+      name: "Budi Gunawan",
+      role: "Programmer",
+      isActive: true,
+      employed: "2020-07-31T03:24:00",
+      email: "budigunawan@mail.com",
+      phone: "+62123456789",
+    },
+  ];
+
   return (
     <Layout>
       <Box padding='22px' backgroundColor='white' borderRadius='15px'>
@@ -29,116 +71,14 @@ const Employee = () => {
             Employee Table
           </Text>
         </Flex>
-        <TableContainer>
-          <Table variant='simple' colorScheme='blackAlpha'>
-            <Thead>
-              <Tr>
-                <Th>Name</Th>
-                <Th>Role</Th>
-                <Th>Status</Th>
-                <Th>Employed</Th>
-                <Th>Email</Th>
-                <Th>Phone</Th>
-                <Th></Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              <Tr>
-                <Td>
-                  <Flex gap={3} alignItems='center'>
-                    <Avatar name='John Doe' src='https://bit.ly/broken-link' />
-                    <Text>John Doe</Text>
-                  </Flex>
-                </Td>
-                <Td>Programmer</Td>
-                <Td>
-                  <Tag colorScheme='green'>Active</Tag>
-                </Td>
-                <Td>14/06/21</Td>
-                <Td>johndoe@mail.com</Td>
-                <Td>+62857865221234</Td>
-                <Td>
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      aria-label='options'
-                      icon={<BsThreeDotsVertical />}
-                      variant='outline'
-                    />
-                    <MenuList>
-                      <MenuItem>Edit</MenuItem>
-                      <MenuItem>Delete</MenuItem>
-                    </MenuList>
-                  </Menu>
-                </Td>
-              </Tr>
-              <Tr>
-                <Td>
-                  <Flex gap={3} alignItems='center'>
-                    <Avatar
-                      name='Jessica Jane'
-                      src='https://bit.ly/broken-link'
-                    />
-                    <Text>Jessica Jane</Text>
-                  </Flex>
-                </Td>
-                <Td>Programmer</Td>
-                <Td>
-                  <Tag colorScheme='green'>Active</Tag>
-                </Td>
-                <Td>14/06/21</Td>
-                <Td>johndoe@mail.com</Td>
-                <Td>+62857865221234</Td>
-                <Td>
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      aria-label='options'
-                      icon={<BsThreeDotsVertical />}
-                      variant='outline'
-                    />
-                    <MenuList>
-                      <MenuItem>Edit</MenuItem>
-                      <MenuItem>Delete</MenuItem>
-                    </MenuList>
-                  </Menu>
-                </Td>
-              </Tr>
-              <Tr>
-                <Td>
-                  <Flex gap={3} alignItems='center'>
-                    <Avatar
-                      name='Budi Gunawan'
-                      src='https://bit.ly/broken-link'
-                    />
-                    <Text>Budi Gunawan</Text>
-                  </Flex>
-                </Td>
-                <Td>Programmer</Td>
-                <Td>
-                  <Tag colorScheme='green'>Active</Tag>
-                </Td>
-                <Td>14/06/21</Td>
-                <Td>johndoe@mail.com</Td>
-                <Td>+62857865221234</Td>
-                <Td>
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      aria-label='options'
-                      icon={<BsThreeDotsVertical />}
-                      variant='outline'
-                    />
-                    <MenuList>
-                      <MenuItem>Edit</MenuItem>
-                      <MenuItem>Delete</MenuItem>
-                    </MenuList>
-                  </Menu>
-                </Td>
-              </Tr>
-            </Tbody>
-          </Table>
-        </TableContainer>
+        <TableEmployee data={employeeData} />
+        <TablePagination
+          pages={pages}
+          pagesCount={pagesCount}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
       </Box>
     </Layout>
   );

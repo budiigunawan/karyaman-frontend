@@ -64,7 +64,7 @@ const TableEmployee = ({ data }) => {
         <Table variant='simple' colorScheme='blackAlpha'>
           <Thead>
             <Tr>
-              <Th>Name</Th>
+              <Th>Full name</Th>
               <Th>Role</Th>
               <Th>Status</Th>
               <Th>Employed</Th>

@@ -18,6 +18,16 @@ import Webcam from "react-webcam";
 const ModalCreateAttendance = ({ isOpen, onClose }) => {
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
+  const [location, setLocation] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((loc) => setLocation(loc));
+    } else {
+      setErrorMessage("Geolocation is not supported by this browser");
+    }
+  };
 
   const handleCapturePhoto = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
@@ -25,11 +35,13 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
   }, [webcamRef, setImgSrc]);
 
   const handleCreateAttendance = () => {
-    console.log("attendance create");
+    console.log(location, "location");
+    console.log(imgSrc, "image");
   };
 
   const handleCloseModal = () => {
     setImgSrc(null);
+    setLocation(null);
     onClose();
   };
 
@@ -55,12 +67,24 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
               <Button size='sm' colorScheme='blue' onClick={handleCapturePhoto}>
                 Capture Photo
               </Button>
+              {imgSrc && (
+                <>
+                  <Text>Photo result:</Text>
+                  <Box>
+                    <Image src={imgSrc} />
+                  </Box>
+                </>
+              )}
             </Stack>
-            {imgSrc && (
-              <Box>
-                <Image src={imgSrc} />
-              </Box>
-            )}
+            <Stack>
+              <Button size='sm' colorScheme='blue' onClick={getLocation}>
+                Get Location
+              </Button>
+              {location && (
+                <Text>{`Lat: ${location.coords.latitude} Lng: ${location.coords.longitude}`}</Text>
+              )}
+            </Stack>
+            {errorMessage && <Text color='red'>{errorMessage}</Text>}
           </Stack>
         </ModalBody>
         <ModalFooter>
@@ -69,7 +93,7 @@ const ModalCreateAttendance = ({ isOpen, onClose }) => {
             onClick={handleCreateAttendance}
             colorScheme='blue'
             mr={3}
-            isDisabled={!imgSrc}
+            isDisabled={!(imgSrc && location)}
           >
             Save
           </Button>

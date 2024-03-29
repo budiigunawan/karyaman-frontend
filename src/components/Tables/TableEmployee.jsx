@@ -38,10 +38,7 @@ const TableEmployee = ({ data }) => {
             <Tr key={employee.id}>
               <Td>
                 <Flex gap={3} alignItems='center'>
-                  <Avatar
-                    name={employee.name}
-                    src='https://bit.ly/broken-link'
-                  />
+                  <Avatar name={employee.name} src='#' />
                   <Text>{employee.name}</Text>
                 </Flex>
               </Td>

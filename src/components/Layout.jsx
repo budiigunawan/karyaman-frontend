@@ -20,19 +20,13 @@ import {
   MenuList,
   Link,
 } from "@chakra-ui/react";
-import {
-  FiHome,
-  FiMenu,
-  FiChevronDown,
-  FiUsers,
-  FiWatch,
-} from "react-icons/fi";
+import { FiMenu, FiChevronDown, FiUsers } from "react-icons/fi";
+import { BsClockHistory } from "react-icons/bs";
 import Logo from "../assets/logo.png";
 
 const LinkItems = [
-  { name: "Dashboard", href: "/dashboard", icon: FiHome },
+  { name: "Attendance", href: "/attendance", icon: BsClockHistory },
   { name: "Employee", href: "/employee", icon: FiUsers },
-  { name: "Attendance", href: "/attendance", icon: FiWatch },
 ];
 
 const SidebarContent = ({ onClose, ...rest }) => {
@@ -88,7 +82,7 @@ const NavItem = ({ href, icon, children, ...rest }) => {
         role='group'
         cursor='pointer'
         _hover={{
-          bg: "cyan.400",
+          bg: "blue.400",
           color: "white",
         }}
         {...rest}

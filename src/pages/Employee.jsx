@@ -4,6 +4,7 @@ import Layout from "../components/Layout";
 import TableEmployee from "../components/Tables/TableEmployee";
 import TablePagination from "../components/Tables/TablePagination";
 import ModalCreateEmployee from "../components/Modals/ModalCreateEmployee";
+import { FaPlus } from "react-icons/fa6";
 
 const Employee = () => {
   const {
@@ -84,8 +85,12 @@ const Employee = () => {
           <Text as='h2' fontWeight='bold' fontSize='large'>
             Employee Table
           </Text>
-          <Button colorScheme='blue' onClick={onOpenModalCreateEmployee}>
-            Add Employee
+          <Button
+            leftIcon={<FaPlus />}
+            colorScheme='blue'
+            onClick={onOpenModalCreateEmployee}
+          >
+            Employee
           </Button>
         </HStack>
         <TableEmployee data={employeeData} />

@@ -12,6 +12,7 @@ import {
   Box,
   Image,
   Text,
+  useBoolean,
 } from "@chakra-ui/react";
 import axios from "axios";
 import Webcam from "react-webcam";
@@ -26,6 +27,8 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
   const [imgSrc, setImgSrc] = useState(null);
   const [position, setPosition] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loadingPosition, setLoadingPosition] = useBoolean();
+  const [loadingSubmit, setLoadingSubmit] = useBoolean();
 
   const DefaultIcon = L.icon({
     iconUrl: icon,
@@ -35,6 +38,8 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
   L.Marker.prototype.options.icon = DefaultIcon;
 
   const getPosition = () => {
+    setLoadingPosition.on();
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((result) =>
         setPosition([result.coords.latitude, result.coords.longitude])
@@ -42,6 +47,8 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
     } else {
       setErrorMessage("Geolocation is not supported by this browser");
     }
+
+    setLoadingPosition.off();
   };
 
   const uploadPhoto = async (file) => {
@@ -73,22 +80,36 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
 
   const handleCreateAttendance = async () => {
     try {
+      setLoadingSubmit.on();
       const photoUrl = await uploadPhoto(imgSrc);
       // https://res.cloudinary.com/dry2a78ix/image/upload/v1711769530/dluecnltsarqxfuzxp3r.jpg
       console.log(photoUrl, "photoUrl");
       console.log(position, "position");
     } catch (error) {
+      setErrorMessage("Error creating new attendance");
       console.error("Error creating new attendance:", error);
+    } finally {
+      setLoadingSubmit.off();
     }
   };
 
-  const handleClockOutAttendance = () => {
-    console.log(data, "target attendance");
-    console.log(position, "position");
-    console.log(imgSrc, "image");
+  const handleClockOutAttendance = async () => {
+    try {
+      setLoadingSubmit.on();
+      const photoUrl = await uploadPhoto(imgSrc);
+      // https://res.cloudinary.com/dry2a78ix/image/upload/v1711769530/dluecnltsarqxfuzxp3r.jpg
+      console.log(photoUrl, "photoUrl");
+      console.log(position, "position");
+      console.log(data, "target attendance");
+    } catch (error) {
+      setErrorMessage("Error clock out attendance");
+      console.error("Error clock out attendance:", error);
+    } finally {
+      setLoadingSubmit.off();
+    }
   };
 
-  const handleSave = () => {
+  const handleSubmit = () => {
     if (data) {
       handleClockOutAttendance();
     } else {
@@ -168,7 +189,13 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
                   </MapContainer>
                 </Box>
               ) : (
-                <Button size='sm' colorScheme='blue' onClick={getPosition}>
+                <Button
+                  size='sm'
+                  colorScheme='blue'
+                  onClick={getPosition}
+                  isLoading={loadingPosition}
+                  loadingText='Getting Position'
+                >
                   Get Position
                 </Button>
               )}
@@ -179,12 +206,14 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
         <ModalFooter>
           <Button
             type='button'
-            onClick={handleSave}
+            onClick={handleSubmit}
             colorScheme='blue'
             mr={3}
             isDisabled={!(imgSrc && position)}
+            isLoading={loadingSubmit}
+            loadingText='Submitting'
           >
-            Save
+            Submit
           </Button>
           <Button onClick={handleCloseModal}>Cancel</Button>
         </ModalFooter>

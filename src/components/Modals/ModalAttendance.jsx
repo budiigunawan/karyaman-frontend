@@ -13,6 +13,7 @@ import {
   Image,
   Text,
 } from "@chakra-ui/react";
+import axios from "axios";
 import Webcam from "react-webcam";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
@@ -43,6 +44,24 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
     }
   };
 
+  const uploadPhoto = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
+
+      const cloudUrl = `https://api.cloudinary.com/v1_1/${
+        import.meta.env.VITE_CLOUD_NAME
+      }/upload`;
+
+      const response = await axios.post(cloudUrl, formData);
+      const photoUrl = response.data.url;
+      return photoUrl;
+    } catch (error) {
+      console.error("Error uploading the photo:", error);
+    }
+  };
+
   const handleTakePhoto = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
@@ -52,9 +71,15 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
     setImgSrc(null);
   };
 
-  const handleCreateAttendance = () => {
-    console.log(position, "position");
-    console.log(imgSrc, "image");
+  const handleCreateAttendance = async () => {
+    try {
+      const photoUrl = await uploadPhoto(imgSrc);
+      // https://res.cloudinary.com/dry2a78ix/image/upload/v1711769530/dluecnltsarqxfuzxp3r.jpg
+      console.log(photoUrl, "photoUrl");
+      console.log(position, "position");
+    } catch (error) {
+      console.error("Error creating new attendance:", error);
+    }
   };
 
   const handleClockOutAttendance = () => {

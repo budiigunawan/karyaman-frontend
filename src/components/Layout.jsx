@@ -1,4 +1,4 @@
-import { Link as ReactRouterLink } from "react-router-dom";
+import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import {
   IconButton,
   Avatar,
@@ -23,6 +23,7 @@ import {
 import { FiMenu, FiChevronDown, FiUsers } from "react-icons/fi";
 import { BsClockHistory } from "react-icons/bs";
 import Logo from "../assets/logo.png";
+import { useAuth } from "../context/AuthContext";
 
 const LinkItems = [
   { name: "Attendance", href: "/attendance", icon: BsClockHistory },
@@ -32,26 +33,26 @@ const LinkItems = [
 const SidebarContent = ({ onClose, ...rest }) => {
   return (
     <Box
-      transition='3s ease'
+      transition="3s ease"
       bg={useColorModeValue("white", "gray.900")}
-      borderRight='1px'
+      borderRight="1px"
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
       w={{ base: "full", md: 60 }}
-      pos='fixed'
-      h='full'
+      pos="fixed"
+      h="full"
       {...rest}
     >
-      <Flex h='20' alignItems='center' mx='8' justifyContent='space-between'>
+      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Link
           as={ReactRouterLink}
-          to='/dashboard'
-          display='flex'
+          to="/dashboard"
+          display="flex"
           gap={2}
           style={{ textDecoration: "none" }}
           _focus={{ boxShadow: "none" }}
         >
-          <Image boxSize='40px' objectFit='cover' src={Logo} alt='logo' />
-          <Text fontSize='2xl' fontFamily='monospace' fontWeight='bold'>
+          <Image boxSize="40px" objectFit="cover" src={Logo} alt="logo" />
+          <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
             Karyaman
           </Text>
         </Link>
@@ -75,12 +76,12 @@ const NavItem = ({ href, icon, children, ...rest }) => {
       _focus={{ boxShadow: "none" }}
     >
       <Flex
-        align='center'
-        p='4'
-        mx='4'
-        borderRadius='lg'
-        role='group'
-        cursor='pointer'
+        align="center"
+        p="4"
+        mx="4"
+        borderRadius="lg"
+        role="group"
+        cursor="pointer"
         _hover={{
           bg: "blue.400",
           color: "white",
@@ -89,8 +90,8 @@ const NavItem = ({ href, icon, children, ...rest }) => {
       >
         {icon && (
           <Icon
-            mr='4'
-            fontSize='16'
+            mr="4"
+            fontSize="16"
             _groupHover={{
               color: "white",
             }}
@@ -103,15 +104,15 @@ const NavItem = ({ href, icon, children, ...rest }) => {
   );
 };
 
-const MobileNav = ({ onOpen, ...rest }) => {
+const MobileNav = ({ onOpen, hanldeLogout, user, ...rest }) => {
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
-      height='20'
-      alignItems='center'
+      height="20"
+      alignItems="center"
       bg={useColorModeValue("white", "gray.900")}
-      borderBottomWidth='1px'
+      borderBottomWidth="1px"
       borderBottomColor={useColorModeValue("gray.200", "gray.700")}
       justifyContent={{ base: "space-between", md: "flex-end" }}
       {...rest}
@@ -119,16 +120,16 @@ const MobileNav = ({ onOpen, ...rest }) => {
       <IconButton
         display={{ base: "flex", md: "none" }}
         onClick={onOpen}
-        variant='outline'
-        aria-label='open menu'
+        variant="outline"
+        aria-label="open menu"
         icon={<FiMenu />}
       />
 
       <Text
         display={{ base: "flex", md: "none" }}
-        fontSize='2xl'
-        fontFamily='monospace'
-        fontWeight='bold'
+        fontSize="2xl"
+        fontFamily="monospace"
+        fontWeight="bold"
       >
         Karyaman
       </Text>
@@ -138,25 +139,20 @@ const MobileNav = ({ onOpen, ...rest }) => {
           <Menu>
             <MenuButton
               py={2}
-              transition='all 0.3s'
+              transition="all 0.3s"
               _focus={{ boxShadow: "none" }}
             >
               <HStack>
-                <Avatar
-                  size={"sm"}
-                  src={
-                    "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                  }
-                />
+                <Avatar size={"md"} name={user.fullName} src="#" />
                 <VStack
                   display={{ base: "none", md: "flex" }}
-                  alignItems='flex-start'
-                  spacing='1px'
-                  ml='2'
+                  alignItems="flex-start"
+                  spacing="1px"
+                  ml="2"
                 >
-                  <Text fontSize='sm'>Justina Clark</Text>
-                  <Text fontSize='xs' color='gray.600'>
-                    Admin
+                  <Text fontSize="sm">{user.fullName}</Text>
+                  <Text fontSize="xs" color="gray.600">
+                    {user.isAdmin ? "Admin" : "Employee"}
                   </Text>
                 </VStack>
                 <Box display={{ base: "none", md: "flex" }}>
@@ -168,7 +164,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
               bg={useColorModeValue("white", "gray.900")}
               borderColor={useColorModeValue("gray.200", "gray.700")}
             >
-              <MenuItem>Sign out</MenuItem>
+              <MenuItem onClick={hanldeLogout}>Sign out</MenuItem>
             </MenuList>
           </Menu>
         </Flex>
@@ -179,28 +175,36 @@ const MobileNav = ({ onOpen, ...rest }) => {
 
 const Layout = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user, logout } = useAuth();
+
+  const navigate = useNavigate();
+
+  const hanldeLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
-    <Box minH='100vh' bg={useColorModeValue("gray.100", "gray.900")}>
+    <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}
       />
       <Drawer
         isOpen={isOpen}
-        placement='left'
+        placement="left"
         onClose={onClose}
         returnFocusOnClose={false}
         onOverlayClick={onClose}
-        size='full'
+        size="full"
       >
         <DrawerContent>
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p='4'>
+      <MobileNav onOpen={onOpen} hanldeLogout={hanldeLogout} user={user.data} />
+      <Box ml={{ base: 0, md: 60 }} p="4">
         {children}
       </Box>
     </Box>

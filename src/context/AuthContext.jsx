@@ -1,18 +1,18 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const [accessToken, setAccessToken] = useState(
-    localStorage.getItem('accessToken'),
+    localStorage.getItem("accessToken"),
   );
   const [refreshToken, setRefreshToken] = useState(
-    localStorage.getItem('refreshToken'),
+    localStorage.getItem("refreshToken"),
   );
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
 
   const login = async (email, password) => {
     try {
@@ -23,8 +23,8 @@ export const AuthProvider = ({ children }) => {
       });
       setAccessToken(response.data.accessToken);
       setRefreshToken(response.data.refreshToken);
-      localStorage.setItem('accessToken', response.data.accessToken);
-      localStorage.setItem('refreshToken', response.data.refreshToken);
+      localStorage.setItem("accessToken", response.data.accessToken);
+      localStorage.setItem("refreshToken", response.data.refreshToken);
     } catch (error) {
       console.error(error);
     } finally {
@@ -35,8 +35,9 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setAccessToken(null);
     setRefreshToken(null);
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
   };
 
   useEffect(() => {
@@ -44,12 +45,11 @@ export const AuthProvider = ({ children }) => {
       try {
         const response = await axios.get(`${apiUrl}/api/v1/users/profile`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         });
-        console.log(response, 'iki response');
         setUser(response.data);
-        localStorage.setItem('user', JSON.stringify(response.data));
+        localStorage.setItem("user", JSON.stringify(response.data));
       } catch (error) {
         console.error(error);
       }
@@ -70,14 +70,15 @@ export const AuthProvider = ({ children }) => {
           );
           setAccessToken(response.data.accessToken);
           setRefreshToken(response.data.refreshToken);
-          localStorage.setItem('accessToken', response.data.accessToken);
-          localStorage.setItem('refreshToken', response.data.refreshToken);
+          localStorage.setItem("accessToken", response.data.accessToken);
+          localStorage.setItem("refreshToken", response.data.refreshToken);
         } catch (error) {
           console.error(error);
           setAccessToken(null);
           setRefreshToken(null);
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("user");
         }
       };
 

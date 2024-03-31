@@ -11,22 +11,27 @@ export const AuthProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState(
     localStorage.getItem("refreshToken"),
   );
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
 
   const login = async (email, password) => {
     try {
       setLoading(true);
+      setErrorMessage("");
+
       const response = await axios.post(`${apiUrl}/api/v1/auth/login`, {
         email,
         password,
       });
+
       setAccessToken(response.data.accessToken);
       setRefreshToken(response.data.refreshToken);
       localStorage.setItem("accessToken", response.data.accessToken);
       localStorage.setItem("refreshToken", response.data.refreshToken);
     } catch (error) {
       console.error(error);
+      setErrorMessage(error?.response?.data?.message || "Server Error");
     } finally {
       setLoading(false);
     }
@@ -48,8 +53,8 @@ export const AuthProvider = ({ children }) => {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         });
-        setUser(response.data);
-        localStorage.setItem("user", JSON.stringify(response.data));
+        setUser(response?.data);
+        localStorage.setItem("user", JSON.stringify(response?.data));
       } catch (error) {
         console.error(error);
       }
@@ -94,6 +99,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     loading,
+    errorMessage,
   };
 
   return (

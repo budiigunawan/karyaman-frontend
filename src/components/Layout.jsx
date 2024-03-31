@@ -143,16 +143,16 @@ const MobileNav = ({ onOpen, hanldeLogout, user, ...rest }) => {
               _focus={{ boxShadow: "none" }}
             >
               <HStack>
-                <Avatar size={"md"} name={user.fullName} src="#" />
+                <Avatar size={"md"} name={user?.fullName || "Jampes"} src="#" />
                 <VStack
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">{user.fullName}</Text>
+                  <Text fontSize="sm">{user?.fullName || "Jampes"}</Text>
                   <Text fontSize="xs" color="gray.600">
-                    {user.isAdmin ? "Admin" : "Employee"}
+                    {user?.isAdmin ? "Admin" : "Employee"}
                   </Text>
                 </VStack>
                 <Box display={{ base: "none", md: "flex" }}>
@@ -203,7 +203,11 @@ const Layout = ({ children }) => {
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <MobileNav onOpen={onOpen} hanldeLogout={hanldeLogout} user={user.data} />
+      <MobileNav
+        onOpen={onOpen}
+        hanldeLogout={hanldeLogout}
+        user={user?.data}
+      />
       <Box ml={{ base: 0, md: 60 }} p="4">
         {children}
       </Box>

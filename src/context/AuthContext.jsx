@@ -5,35 +5,51 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
-  const [accessToken, setAccessToken] = useState(null);
-  const [refreshToken, setRefreshToken] = useState(null);
+  const [accessToken, setAccessToken] = useState(
+    localStorage.getItem('accessToken'),
+  );
+  const [refreshToken, setRefreshToken] = useState(
+    localStorage.getItem('refreshToken'),
+  );
+  const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
 
   const login = async (email, password) => {
     try {
+      setLoading(true);
       const response = await axios.post(`${apiUrl}/api/v1/auth/login`, {
         email,
         password,
       });
-      setAccessToken(response.accessToken);
-      setRefreshToken(response.refreshToken);
+      setAccessToken(response.data.accessToken);
+      setRefreshToken(response.data.refreshToken);
+      localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = () => {
     setAccessToken(null);
     setRefreshToken(null);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   };
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(`${apiUrl}/api/v1/users/profile`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
         });
+        console.log(response, 'iki response');
         setUser(response.data);
+        localStorage.setItem('user', JSON.stringify(response.data));
       } catch (error) {
         console.error(error);
       }
@@ -52,11 +68,16 @@ export const AuthProvider = ({ children }) => {
               refreshToken,
             },
           );
-          setAccessToken(response.accessToken);
-          setRefreshToken(response.refreshToken);
+          setAccessToken(response.data.accessToken);
+          setRefreshToken(response.data.refreshToken);
+          localStorage.setItem('accessToken', response.data.accessToken);
+          localStorage.setItem('refreshToken', response.data.refreshToken);
         } catch (error) {
           console.error(error);
-          setUser(null);
+          setAccessToken(null);
+          setRefreshToken(null);
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
         }
       };
 
@@ -67,10 +88,11 @@ export const AuthProvider = ({ children }) => {
   }, [apiUrl, refreshToken]);
 
   const contextValue = {
-    accessToken,
     user,
+    accessToken,
     login,
     logout,
+    loading,
   };
 
   return (

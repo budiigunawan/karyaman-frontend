@@ -45,7 +45,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Link
           as={ReactRouterLink}
-          to="/dashboard"
+          to="/attendance"
           display="flex"
           gap={2}
           style={{ textDecoration: "none" }}

@@ -60,22 +60,22 @@ const TableEmployee = ({ employees, revalidateEmployees }) => {
 
   return (
     <>
-      <TableContainer>
-        <Table variant="simple" colorScheme="blackAlpha">
-          <Thead>
-            <Tr>
-              <Th>Full name</Th>
-              <Th>Role</Th>
-              <Th>Status</Th>
-              <Th>Employed</Th>
-              <Th>Email</Th>
-              <Th>Phone</Th>
-              <Th></Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {employees?.length > 0 ? (
-              employees?.map((employee) => (
+      {employees.length > 0 ? (
+        <TableContainer>
+          <Table variant="simple" colorScheme="blackAlpha">
+            <Thead>
+              <Tr>
+                <Th>Full name</Th>
+                <Th>Role</Th>
+                <Th>Status</Th>
+                <Th>Employed</Th>
+                <Th>Email</Th>
+                <Th>Phone</Th>
+                <Th></Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {employees?.map((employee) => (
                 <Tr key={employee.id}>
                   <Td>
                     <Flex gap={3} alignItems="center">
@@ -121,13 +121,13 @@ const TableEmployee = ({ employees, revalidateEmployees }) => {
                     </Menu>
                   </Td>
                 </Tr>
-              ))
-            ) : (
-              <Text>Employees is empty</Text>
-            )}
-          </Tbody>
-        </Table>
-      </TableContainer>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <Text>Employee is empty</Text>
+      )}
       <ModalDeleteEmployee
         isOpen={isOpenModalDeleteEmployee}
         cancelRef={cancelRef}

@@ -13,6 +13,7 @@ import {
   Image,
   Text,
   useBoolean,
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
 import Webcam from "react-webcam";
@@ -22,13 +23,20 @@ import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 
-const ModalAttendance = ({ isOpen, onClose, data = null }) => {
+const ModalAttendance = ({
+  isOpen,
+  onClose,
+  data = null,
+  revalidateAttendances,
+}) => {
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
   const [position, setPosition] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [loadingPosition, setLoadingPosition] = useBoolean();
   const [loadingSubmit, setLoadingSubmit] = useBoolean();
+  const toast = useToast();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const DefaultIcon = L.icon({
     iconUrl: icon,
@@ -42,7 +50,7 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((result) =>
-        setPosition([result.coords.latitude, result.coords.longitude])
+        setPosition([result.coords.latitude, result.coords.longitude]),
       );
     } else {
       setErrorMessage("Geolocation is not supported by this browser");
@@ -82,12 +90,39 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
     try {
       setLoadingSubmit.on();
       const photoUrl = await uploadPhoto(imgSrc);
-      // https://res.cloudinary.com/dry2a78ix/image/upload/v1711769530/dluecnltsarqxfuzxp3r.jpg
-      console.log(photoUrl, "photoUrl");
-      console.log(position, "position");
-    } catch (error) {
-      setErrorMessage("Error creating new attendance");
-      console.error("Error creating new attendance:", error);
+      const pointIn = position.join(",");
+      const clockIn = new Date().toISOString();
+      const imgIn = photoUrl;
+
+      const createAttendancePayload = {
+        pointIn,
+        clockIn,
+        imgIn,
+      };
+
+      const response = await axios.post(
+        `${apiUrl}/api/v1/attendance/create`,
+        createAttendancePayload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        },
+      );
+
+      if (response.data) {
+        toast({
+          title: response.data.message || "Employee created successfully",
+          position: "top",
+          status: "success",
+          isClosable: true,
+        });
+        handleCloseModal();
+        revalidateAttendances();
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage(err?.response?.data?.message || "Server Error");
     } finally {
       setLoadingSubmit.off();
     }
@@ -97,13 +132,39 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
     try {
       setLoadingSubmit.on();
       const photoUrl = await uploadPhoto(imgSrc);
-      // https://res.cloudinary.com/dry2a78ix/image/upload/v1711769530/dluecnltsarqxfuzxp3r.jpg
-      console.log(photoUrl, "photoUrl");
-      console.log(position, "position");
-      console.log(data, "target attendance");
-    } catch (error) {
-      setErrorMessage("Error clock out attendance");
-      console.error("Error clock out attendance:", error);
+      const pointOut = position.join(",");
+      const clockOut = new Date().toISOString();
+      const imgOut = photoUrl;
+
+      const clockOutAttendancePayload = {
+        pointOut,
+        clockOut,
+        imgOut,
+      };
+
+      const response = await axios.put(
+        `${apiUrl}/api/v1/attendance/edit/${data.id}`,
+        clockOutAttendancePayload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        },
+      );
+
+      if (response.data) {
+        toast({
+          title: response.data.message || "Employee created successfully",
+          position: "top",
+          status: "success",
+          isClosable: true,
+        });
+        handleCloseModal();
+        revalidateAttendances();
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage(err?.response?.data?.message || "Server Error");
     } finally {
       setLoadingSubmit.off();
     }
@@ -145,8 +206,8 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
                     <Image src={imgSrc} />
                   </Box>
                   <Button
-                    size='sm'
-                    colorScheme='red'
+                    size="sm"
+                    colorScheme="red"
                     onClick={handleRemovePhoto}
                   >
                     Retake Photo
@@ -157,11 +218,11 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
                   <Webcam
                     audio={false}
                     ref={webcamRef}
-                    screenshotFormat='image/jpeg'
+                    screenshotFormat="image/jpeg"
                   />
                   <Button
-                    size='sm'
-                    colorScheme='blue'
+                    size="sm"
+                    colorScheme="blue"
                     onClick={handleTakePhoto}
                   >
                     Take Photo
@@ -181,7 +242,7 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
                   >
                     <TileLayer
                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     <Marker position={position}>
                       <Popup>Your Position</Popup>
@@ -190,32 +251,34 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
                 </Box>
               ) : (
                 <Button
-                  size='sm'
-                  colorScheme='blue'
+                  size="sm"
+                  colorScheme="blue"
                   onClick={getPosition}
                   isLoading={loadingPosition}
-                  loadingText='Getting Position'
+                  loadingText="Getting Position"
                 >
                   Get Position
                 </Button>
               )}
             </Stack>
-            {errorMessage && <Text color='red'>{errorMessage}</Text>}
+            {errorMessage && <Text color="red">{errorMessage}</Text>}
           </Stack>
         </ModalBody>
         <ModalFooter>
           <Button
-            type='button'
+            type="button"
             onClick={handleSubmit}
-            colorScheme='blue'
+            colorScheme="blue"
             mr={3}
             isDisabled={!(imgSrc && position)}
             isLoading={loadingSubmit}
-            loadingText='Submitting'
+            loadingText="Submitting"
           >
             Submit
           </Button>
-          <Button onClick={handleCloseModal}>Cancel</Button>
+          <Button onClick={handleCloseModal} isDisabled={loadingSubmit}>
+            Cancel
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

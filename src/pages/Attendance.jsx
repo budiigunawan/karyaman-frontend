@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Text,
@@ -85,9 +85,27 @@ const Attendance = () => {
     }
   };
 
-  // const isAdmin = useMemo(() => {
-  //   return user?.data?.isAdmin;
-  // }, [user?.data?.isAdmin]);
+  const isClockedIdToday = useMemo(() => {
+    if (user?.data && attendances?.data?.length) {
+      let currentUserAttendances;
+
+      if (user.data.isAdmin) {
+        currentUserAttendances = attendances.data.filter(
+          (attendance) => attendance.userId === user.data.id,
+        );
+      } else {
+        currentUserAttendances = attendances.data;
+      }
+
+      const todayAttendance = currentUserAttendances.find(
+        (attendance) =>
+          new Date(attendance.clockIn).toISOString().split("T")[0] ===
+          new Date().toISOString().split("T")[0],
+      );
+
+      return !!todayAttendance;
+    }
+  }, [user.data, attendances.data]);
 
   useEffect(() => {
     const getAttendances = async () => {
@@ -129,7 +147,7 @@ const Attendance = () => {
             leftIcon={<FaPlus />}
             colorScheme="blue"
             onClick={onOpenModalCreateAttendance}
-            isDisabled={isLoading}
+            isDisabled={isLoading || isClockedIdToday}
           >
             Attendance
           </Button>

@@ -64,6 +64,23 @@ const Employee = () => {
     setFilterData({ limit: newPageSize, ...filterData });
   };
 
+  const revalidateEmployees = async () => {
+    try {
+      setIsLoading.on();
+      const response = await axios.get(`${apiUrl}/api/v1/users/list`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setEmployees(response.data);
+    } catch (err) {
+      console.error(err);
+      setErrorMessage(err?.response?.data?.message || "Server Error");
+    } finally {
+      setIsLoading.off();
+    }
+  };
+
   useEffect(() => {
     const getEmployees = async () => {
       try {
@@ -123,6 +140,7 @@ const Employee = () => {
       <ModalCreateEmployee
         isOpen={isOpenModalCreateEmployee}
         onClose={onCloseModalCreateEmployee}
+        revalidateEmployees={revalidateEmployees}
       />
     </Layout>
   );

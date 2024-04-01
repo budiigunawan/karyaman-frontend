@@ -12,9 +12,12 @@ import {
   ModalOverlay,
   Select,
   Stack,
+  useBoolean,
+  useToast,
 } from "@chakra-ui/react";
+import axios from "axios";
 
-const ModalCreateEmployee = ({ isOpen, onClose }) => {
+const ModalCreateEmployee = ({ isOpen, onClose, revalidateEmployees }) => {
   const roles = [
     {
       id: "096f8ab2-d904-4b57-8503-15bc40a40d4f",
@@ -33,28 +36,65 @@ const ModalCreateEmployee = ({ isOpen, onClose }) => {
       name: "Human Resources",
     },
   ];
+  const [isLoading, setIsLoading] = useBoolean();
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const toast = useToast();
 
-  const handleCreateEmployee = (e) => {
+  const handleCreateEmployee = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("fullName");
-    const role = formData.get("role");
-    const employed = new Date(formData.get("employed")).toISOString();
-    const email = formData.get("email");
-    const phone = formData.get("phone");
-    const isAdmin = formData.get("access");
 
-    const employeePayload = {
-      name,
-      role,
-      employed,
-      email,
-      phone,
-      isAdmin,
-      isActive: true,
-    };
+    try {
+      setIsLoading.on();
+      const formData = new FormData(e.currentTarget);
+      const fullName = formData.get("fullName");
+      const email = formData.get("email");
+      const phone = formData.get("phone");
+      const isAdmin = JSON.parse(formData.get("access"));
+      const employed = new Date(formData.get("employed")).toISOString();
+      const roleId = formData.get("role");
 
-    console.log(employeePayload, "payload");
+      const employeePayload = {
+        fullName,
+        email,
+        password: "User1234!",
+        phone,
+        isAdmin,
+        isActive: true,
+        employed,
+        roleId,
+      };
+
+      const response = await axios.post(
+        `${apiUrl}/api/v1/users/create`,
+        employeePayload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        },
+      );
+
+      if (response.data) {
+        toast({
+          title: "Success add new employee",
+          position: "top",
+          status: "success",
+          isClosable: true,
+        });
+        onClose();
+        revalidateEmployees();
+      }
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: err?.response?.data?.message || "Server Error",
+        position: "top",
+        status: "error",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading.off();
+    }
   };
 
   return (
@@ -82,6 +122,15 @@ const ModalCreateEmployee = ({ isOpen, onClose }) => {
                   name="email"
                   placeholder="johndoe@mail.com"
                   required
+                />
+              </FormControl>
+              <FormControl id="password">
+                <FormLabel>Password</FormLabel>
+                <Input
+                  type="text"
+                  name="password"
+                  defaultValue="User1234!"
+                  isDisabled
                 />
               </FormControl>
               <FormControl id="phone">
@@ -118,7 +167,12 @@ const ModalCreateEmployee = ({ isOpen, onClose }) => {
             </Stack>
           </ModalBody>
           <ModalFooter>
-            <Button type="submit" colorScheme="blue" mr={3}>
+            <Button
+              type="submit"
+              colorScheme="blue"
+              mr={3}
+              isLoading={isLoading}
+            >
               Save
             </Button>
             <Button onClick={onClose}>Cancel</Button>

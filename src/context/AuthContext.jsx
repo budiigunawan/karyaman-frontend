@@ -40,6 +40,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setAccessToken(null);
     setRefreshToken(null);
+    setUser(null);
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
@@ -88,7 +89,7 @@ export const AuthProvider = ({ children }) => {
       };
 
       getRefreshToken();
-    }, 60 * 60 * 1000); // Refresh every 60 minutes
+    }, 5 * 60 * 1000); // Refresh every 5 minutes
 
     return () => clearInterval(interval);
   }, [apiUrl, refreshToken]);

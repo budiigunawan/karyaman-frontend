@@ -1,4 +1,16 @@
-import { Box, Text, Button, HStack, useDisclosure } from "@chakra-ui/react";
+import { useState, useEffect, useMemo } from "react";
+import {
+  Box,
+  Text,
+  Button,
+  HStack,
+  useDisclosure,
+  useBoolean,
+  Spinner,
+  Center,
+} from "@chakra-ui/react";
+import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 import { usePagination } from "@ajna/pagination";
 import Layout from "../components/Layout";
 import TableEmployee from "../components/Tables/TableEmployee";
@@ -7,16 +19,25 @@ import ModalCreateEmployee from "../components/Modals/ModalCreateEmployee";
 import { FaPlus } from "react-icons/fa6";
 
 const Employee = () => {
+  const [filterData, setFilterData] = useState({
+    page: 1,
+    limit: 10,
+  });
+  const [employees, setEmployees] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useBoolean(true);
+  const { accessToken, user } = useAuth();
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const {
     pages,
     pagesCount,
-    // offset,
     currentPage,
     setCurrentPage,
-    // pageSize,
+    pageSize,
     setPageSize,
   } = usePagination({
-    total: 0,
+    total: employees?.totalData || 0,
     limits: {
       outer: 1,
       inner: 1,
@@ -33,78 +54,104 @@ const Employee = () => {
     onClose: onCloseModalCreateEmployee,
   } = useDisclosure();
 
-  const handlePageChange = (nextPage) => {
+  const handleChangePage = (nextPage) => {
     setCurrentPage(nextPage);
+    setFilterData({ page: nextPage, limit: filterData.limit });
   };
 
-  const handlePageSizeChange = (newPageSize) => {
+  const handleChangePageSize = (newPageSize) => {
     setPageSize(newPageSize);
+    setFilterData({ limit: newPageSize, page: filterData.page });
   };
 
-  const employeeData = [
-    {
-      id: "1",
-      name: "John Doe",
-      role: "programmer",
-      isActive: true,
-      employed: "2024-03-20T00:00:00.000Z",
-      email: "johndoe@mail.com",
-      phone: "+62123456789",
-      isAdmin: false,
-    },
-    {
-      id: "2",
-      name: "Jessica Jane",
-      role: "programmer",
-      isActive: false,
-      employed: "2024-03-20T00:00:00.000Z",
-      email: "jessicajane@mail.com",
-      phone: "+62123456789",
-      isAdmin: false,
-    },
-    {
-      id: "3",
-      name: "Budi Gunawan",
-      role: "programmer",
-      isActive: true,
-      employed: "2024-03-20T00:00:00.000Z",
-      email: "budigunawan@mail.com",
-      phone: "+62123456789",
-      isAdmin: false,
-    },
-  ];
+  const revalidateEmployees = async () => {
+    try {
+      setIsLoading.on();
+      const response = await axios.get(`${apiUrl}/api/v1/users/list`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setEmployees(response.data);
+    } catch (err) {
+      console.error(err);
+      setErrorMessage(err?.response?.data?.message || "Server Error");
+    } finally {
+      setIsLoading.off();
+    }
+  };
+
+  const isAdmin = useMemo(() => {
+    return user?.data?.isAdmin;
+  }, [user?.data?.isAdmin]);
+
+  useEffect(() => {
+    const getEmployees = async () => {
+      try {
+        setIsLoading.on();
+        const response = await axios.get(
+          `${apiUrl}/api/v1/users/list?page=${filterData.page}&limit=${filterData.limit}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+        setEmployees(response.data);
+      } catch (err) {
+        console.error(err);
+        setErrorMessage(err?.response?.data?.message || "Server Error");
+      } finally {
+        setIsLoading.off();
+      }
+    };
+
+    getEmployees();
+  }, [accessToken, apiUrl, setIsLoading, filterData]);
 
   return (
     <Layout>
-      <Box padding='22px' backgroundColor='white' borderRadius='15px'>
+      <Box padding="22px" backgroundColor="white" borderRadius="15px">
         <HStack
-          width='100%'
-          padding='6px 0 22px'
-          justifyContent='space-between'
+          width="100%"
+          padding="6px 0 22px"
+          justifyContent="space-between"
         >
-          <Text as='h2' fontWeight='bold' fontSize='large'>
+          <Text as="h2" fontWeight="bold" fontSize="large">
             Employee Table
           </Text>
           <Button
             leftIcon={<FaPlus />}
-            colorScheme='blue'
+            colorScheme="blue"
             onClick={onOpenModalCreateEmployee}
+            isDisabled={isLoading || !isAdmin}
           >
             Employee
           </Button>
         </HStack>
-        <TableEmployee data={employeeData} />
+        <Center minH="200px">
+          {isLoading && <Spinner />}
+          {!isLoading && employees?.data && (
+            <TableEmployee
+              employees={employees.data}
+              revalidateEmployees={revalidateEmployees}
+            />
+          )}
+          {!isLoading && errorMessage && <Text>{errorMessage}</Text>}
+        </Center>
         <TablePagination
           pages={pages}
           pagesCount={pagesCount}
           currentPage={currentPage}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
+          onPageChange={handleChangePage}
+          onPageSizeChange={handleChangePageSize}
+          pageSize={pageSize}
         />
       </Box>
       <ModalCreateEmployee
         isOpen={isOpenModalCreateEmployee}
         onClose={onCloseModalCreateEmployee}
+        revalidateEmployees={revalidateEmployees}
       />
     </Layout>
   );

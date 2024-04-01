@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import {
   IconButton,
@@ -25,12 +26,17 @@ import { BsClockHistory } from "react-icons/bs";
 import Logo from "../assets/logo.png";
 import { useAuth } from "../context/AuthContext";
 
-const LinkItems = [
-  { name: "Attendance", href: "/attendance", icon: BsClockHistory },
-  { name: "Employee", href: "/employee", icon: FiUsers },
+const linkItems = [
+  {
+    name: "Attendance",
+    href: "/attendance",
+    icon: BsClockHistory,
+    isAdmin: false,
+  },
+  { name: "Employee", href: "/employee", icon: FiUsers, isAdmin: true },
 ];
 
-const SidebarContent = ({ onClose, ...rest }) => {
+const SidebarContent = ({ onClose, menuLinks, ...rest }) => {
   return (
     <Box
       transition="3s ease"
@@ -58,7 +64,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
         </Link>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
-      {LinkItems.map((link) => (
+      {menuLinks.map((link) => (
         <NavItem href={link.href} key={link.name} icon={link.icon}>
           {link.name}
         </NavItem>
@@ -179,6 +185,14 @@ const Layout = ({ children }) => {
 
   const navigate = useNavigate();
 
+  const menuLinks = useMemo(() => {
+    if (user?.data?.isAdmin) {
+      return linkItems;
+    }
+
+    return linkItems.filter((link) => !link.isAdmin);
+  }, [user?.data?.isAdmin]);
+
   const hanldeLogout = () => {
     logout();
     navigate("/login");
@@ -189,6 +203,7 @@ const Layout = ({ children }) => {
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}
+        menuLinks={menuLinks}
       />
       <Drawer
         isOpen={isOpen}
@@ -199,7 +214,7 @@ const Layout = ({ children }) => {
         size="full"
       >
         <DrawerContent>
-          <SidebarContent onClose={onClose} />
+          <SidebarContent menuLinks={menuLinks} onClose={onClose} />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}

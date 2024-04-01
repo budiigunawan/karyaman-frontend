@@ -75,7 +75,6 @@ const ModalEditEmployee = ({ data, isOpen, onClose, revalidateEmployees }) => {
       );
 
       if (response.data) {
-        console.log(response.data, "rd");
         toast({
           title: response.data.message || "Employee updated successfully",
           position: "top",

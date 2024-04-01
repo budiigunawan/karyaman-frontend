@@ -36,6 +36,16 @@ const ModalPoint = ({ isOpen, cancelRef, onClose, data }) => {
     }
   }, [data]);
 
+  const imgSrc = useMemo(() => {
+    if (data) {
+      if (data.type === "in") {
+        return data?.imgIn;
+      } else {
+        return data?.imgOut;
+      }
+    }
+  }, [data]);
+
   return (
     <AlertDialog
       isOpen={isOpen}
@@ -44,7 +54,7 @@ const ModalPoint = ({ isOpen, cancelRef, onClose, data }) => {
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
-          <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
             Point {data.type}
           </AlertDialogHeader>
           <AlertDialogBody>
@@ -52,11 +62,11 @@ const ModalPoint = ({ isOpen, cancelRef, onClose, data }) => {
               <Box>
                 <Text>Photo:</Text>
                 <Image
-                  boxSize='348px'
-                  width='100%'
-                  objectFit='cover'
-                  src='https://i.pravatar.cc/348?img=53'
-                  alt='pointin'
+                  boxSize="348px"
+                  width="100%"
+                  objectFit="cover"
+                  src={imgSrc}
+                  alt="pointin"
                 />
               </Box>
               <Box>
@@ -69,7 +79,7 @@ const ModalPoint = ({ isOpen, cancelRef, onClose, data }) => {
                 >
                   <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
                   <Marker position={position}>
                     <Popup>Your Position</Popup>

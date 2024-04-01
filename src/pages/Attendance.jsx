@@ -105,7 +105,7 @@ const Attendance = () => {
 
       return !!todayAttendance;
     }
-  }, [user.data, attendances.data]);
+  }, [user?.data, attendances?.data]);
 
   useEffect(() => {
     const getAttendances = async () => {
@@ -175,6 +175,7 @@ const Attendance = () => {
       <ModalAttendance
         isOpen={isOpenModalCreateAttendance}
         onClose={onCloseModalCreateAttendance}
+        revalidateAttendances={revalidateAttendances}
       />
     </Layout>
   );

@@ -37,7 +37,7 @@ const Employee = () => {
     pageSize,
     setPageSize,
   } = usePagination({
-    total: 0,
+    total: employees?.totalData || 0,
     limits: {
       outer: 1,
       inner: 1,
@@ -56,12 +56,12 @@ const Employee = () => {
 
   const handleChangePage = (nextPage) => {
     setCurrentPage(nextPage);
-    setFilterData({ page: nextPage, ...filterData });
+    setFilterData({ page: nextPage, limit: filterData.limit });
   };
 
   const handleChangePageSize = (newPageSize) => {
     setPageSize(newPageSize);
-    setFilterData({ limit: newPageSize, ...filterData });
+    setFilterData({ limit: newPageSize, page: filterData.page });
   };
 
   const revalidateEmployees = async () => {
@@ -89,11 +89,14 @@ const Employee = () => {
     const getEmployees = async () => {
       try {
         setIsLoading.on();
-        const response = await axios.get(`${apiUrl}/api/v1/users/list`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
+        const response = await axios.get(
+          `${apiUrl}/api/v1/users/list?page=${filterData.page}&limit=${filterData.limit}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
           },
-        });
+        );
         setEmployees(response.data);
       } catch (err) {
         console.error(err);
@@ -104,7 +107,7 @@ const Employee = () => {
     };
 
     getEmployees();
-  }, [accessToken, apiUrl, setIsLoading]);
+  }, [accessToken, apiUrl, setIsLoading, filterData]);
 
   return (
     <Layout>

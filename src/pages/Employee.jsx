@@ -67,11 +67,14 @@ const Employee = () => {
   const revalidateEmployees = async () => {
     try {
       setIsLoading.on();
-      const response = await axios.get(`${apiUrl}/api/v1/users/list`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      const response = await axios.get(
+        `${apiUrl}/api/v1/users/list?page=${filterData.page}&limit=${filterData.limit}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
       setEmployees(response.data);
     } catch (err) {
       console.error(err);

@@ -23,7 +23,12 @@ import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 
-const ModalAttendance = ({ isOpen, onClose, data = null }) => {
+const ModalAttendance = ({
+  isOpen,
+  onClose,
+  data = null,
+  revalidateAttendances,
+}) => {
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
   const [position, setPosition] = useState(null);
@@ -113,6 +118,7 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
           isClosable: true,
         });
         handleCloseModal();
+        revalidateAttendances();
       }
     } catch (err) {
       console.error(err);
@@ -154,6 +160,7 @@ const ModalAttendance = ({ isOpen, onClose, data = null }) => {
           isClosable: true,
         });
         handleCloseModal();
+        revalidateAttendances();
       }
     } catch (err) {
       console.error(err);

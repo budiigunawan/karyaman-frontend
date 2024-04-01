@@ -18,7 +18,7 @@ import { IoExit } from "react-icons/io5";
 import ModalAttendance from "../Modals/ModalAttendance";
 import ModalPoint from "../Modals/ModalPoint";
 
-const TableAttendance = ({ data }) => {
+const TableAttendance = ({ data, revalidateAttendances, currentUser }) => {
   const [clockOutAttendance, setClockOutAttendance] = useState({});
   const [pointAttendance, setPointAttendance] = useState({});
   const cancelRef = useRef();
@@ -54,10 +54,14 @@ const TableAttendance = ({ data }) => {
     onCloseModalPoint();
   };
 
+  const isAuthor = (attendanceUserId) => {
+    return currentUser.id === attendanceUserId;
+  };
+
   return (
     <>
       <TableContainer>
-        <Table variant='simple' colorScheme='blackAlpha'>
+        <Table variant="simple" colorScheme="blackAlpha">
           <Thead>
             <Tr>
               <Th>Full name</Th>
@@ -73,18 +77,18 @@ const TableAttendance = ({ data }) => {
             {data.map((attendace) => (
               <Tr key={attendace.id}>
                 <Td>
-                  <Flex gap={3} alignItems='center'>
-                    <Avatar name={attendace.fullName} src='#' />
-                    <Text>{attendace.fullName}</Text>
+                  <Flex gap={3} alignItems="center">
+                    <Avatar name={attendace.user.fullName} src="#" />
+                    <Text>{attendace.user.fullName}</Text>
                   </Flex>
                 </Td>
-                <Td>{attendace.role}</Td>
+                <Td>{attendace.user.role.name}</Td>
                 <Td>{new Date(attendace.clockIn).toLocaleString("id-ID")}</Td>
                 <Td>
                   {attendace.pointIn ? (
                     <IconButton
-                      title='point in'
-                      colorScheme='blue'
+                      title="point in"
+                      colorScheme="blue"
                       icon={<MdLocationPin />}
                       onClick={() => handleOpenModalPoint(attendace, "in")}
                     />
@@ -100,8 +104,8 @@ const TableAttendance = ({ data }) => {
                 <Td>
                   {attendace.pointOut ? (
                     <IconButton
-                      title='point out'
-                      colorScheme='blue'
+                      title="point out"
+                      colorScheme="blue"
                       icon={<MdLocationPin />}
                       onClick={() => handleOpenModalPoint(attendace, "out")}
                     />
@@ -111,12 +115,14 @@ const TableAttendance = ({ data }) => {
                 </Td>
                 <Td>
                   <IconButton
-                    title='clock out'
-                    colorScheme='red'
+                    title="clock out"
+                    colorScheme="red"
                     icon={<IoExit />}
-                    variant='outline'
+                    variant="outline"
                     onClick={() => handleOpenModalClockOutAttendace(attendace)}
-                    isDisabled={!!attendace.clockOut}
+                    isDisabled={
+                      !!attendace.clockOut || !isAuthor(attendace?.userId)
+                    }
                   />
                 </Td>
               </Tr>
@@ -128,6 +134,7 @@ const TableAttendance = ({ data }) => {
         isOpen={isOpenModalClockOutAttendance}
         onClose={handleCloseModalClockOutAttendace}
         data={clockOutAttendance}
+        revalidateAttendances={revalidateAttendances}
       />
       <ModalPoint
         isOpen={isOpenModalPoint}

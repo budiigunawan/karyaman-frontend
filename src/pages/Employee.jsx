@@ -123,7 +123,7 @@ const Employee = () => {
         </HStack>
         <Center minH="200px">
           {isLoading && <Spinner />}
-          {!isLoading && employees?.data.length !== 0 && (
+          {!isLoading && employees?.data && (
             <TableEmployee
               employees={employees.data}
               revalidateEmployees={revalidateEmployees}

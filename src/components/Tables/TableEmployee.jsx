@@ -74,53 +74,57 @@ const TableEmployee = ({ employees, revalidateEmployees }) => {
             </Tr>
           </Thead>
           <Tbody>
-            {employees?.map((employee) => (
-              <Tr key={employee.id}>
-                <Td>
-                  <Flex gap={3} alignItems="center">
-                    <Avatar name={employee.fullName} src="#" />
-                    <Text>{employee.fullName}</Text>
-                  </Flex>
-                </Td>
-                <Td>{employee.role.name}</Td>
-                <Td>
-                  <Tag colorScheme={employee.isActive ? "green" : "red"}>
-                    {employee.isActive ? "Active" : "Inactive"}
-                  </Tag>
-                </Td>
-                <Td>
-                  {new Date(employee.employed).toLocaleString("id-ID", {
-                    dateStyle: "short",
-                  })}
-                </Td>
-                <Td>{employee.email}</Td>
-                <Td>{employee.phone}</Td>
-                <Td>
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      aria-label="options"
-                      icon={<BsThreeDotsVertical />}
-                      variant="outline"
-                    />
-                    <MenuList>
-                      <MenuItem
-                        onClick={() => handleOpenModalEditEmployee(employee)}
-                      >
-                        Edit
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() =>
-                          handleOpenModalDeleteEmployee(employee.id)
-                        }
-                      >
-                        Delete
-                      </MenuItem>
-                    </MenuList>
-                  </Menu>
-                </Td>
-              </Tr>
-            ))}
+            {employees?.length > 0 ? (
+              employees?.map((employee) => (
+                <Tr key={employee.id}>
+                  <Td>
+                    <Flex gap={3} alignItems="center">
+                      <Avatar name={employee.fullName} src="#" />
+                      <Text>{employee.fullName}</Text>
+                    </Flex>
+                  </Td>
+                  <Td>{employee.role.name}</Td>
+                  <Td>
+                    <Tag colorScheme={employee.isActive ? "green" : "red"}>
+                      {employee.isActive ? "Active" : "Inactive"}
+                    </Tag>
+                  </Td>
+                  <Td>
+                    {new Date(employee.employed).toLocaleString("id-ID", {
+                      dateStyle: "short",
+                    })}
+                  </Td>
+                  <Td>{employee.email}</Td>
+                  <Td>{employee.phone}</Td>
+                  <Td>
+                    <Menu>
+                      <MenuButton
+                        as={IconButton}
+                        aria-label="options"
+                        icon={<BsThreeDotsVertical />}
+                        variant="outline"
+                      />
+                      <MenuList>
+                        <MenuItem
+                          onClick={() => handleOpenModalEditEmployee(employee)}
+                        >
+                          Edit
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() =>
+                            handleOpenModalDeleteEmployee(employee.id)
+                          }
+                        >
+                          Delete
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
+                  </Td>
+                </Tr>
+              ))
+            ) : (
+              <Text>Employees is empty</Text>
+            )}
           </Tbody>
         </Table>
       </TableContainer>

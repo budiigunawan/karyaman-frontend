@@ -12,9 +12,12 @@ import {
   ModalOverlay,
   Select,
   Stack,
+  useBoolean,
+  useToast,
 } from "@chakra-ui/react";
+import axios from "axios";
 
-const ModalEditEmployee = ({ data, isOpen, onClose }) => {
+const ModalEditEmployee = ({ data, isOpen, onClose, revalidateEmployees }) => {
   const roles = [
     {
       id: "096f8ab2-d904-4b57-8503-15bc40a40d4f",
@@ -34,27 +37,65 @@ const ModalEditEmployee = ({ data, isOpen, onClose }) => {
     },
   ];
 
-  const handleEditEmployee = (e) => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const [isLoading, setIsLoading] = useBoolean();
+  const toast = useToast();
+
+  const handleEditEmployee = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const fullName = formData.get("fullName");
-    const role = formData.get("role");
-    const employed = new Date(formData.get("employed")).toISOString();
-    const email = formData.get("email");
-    const phone = formData.get("phone");
-    const isAdmin = formData.get("access");
 
-    const employeePayload = {
-      fullName,
-      role,
-      employed,
-      email,
-      phone,
-      isAdmin,
-      isActive: true,
-    };
+    try {
+      setIsLoading.on();
+      const formData = new FormData(e.currentTarget);
+      const fullName = formData.get("fullName");
+      const role = formData.get("role");
+      const employed = new Date(formData.get("employed")).toISOString();
+      const email = formData.get("email");
+      const phone = formData.get("phone");
+      const isAdmin = JSON.parse(formData.get("access"));
 
-    console.log(employeePayload, "payload");
+      const employeePayload = {
+        fullName,
+        role,
+        employed,
+        email,
+        phone,
+        isAdmin,
+        isActive: true,
+      };
+
+      const response = await axios.put(
+        `${apiUrl}/api/v1/users/edit/${data.id}`,
+        employeePayload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        },
+      );
+
+      if (response.data) {
+        console.log(response.data, "rd");
+        toast({
+          title: response.data.message || "Employee updated successfully",
+          position: "top",
+          status: "success",
+          isClosable: true,
+        });
+        onClose();
+        revalidateEmployees();
+      }
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: err?.response?.data?.message || "Server Error",
+        position: "top",
+        status: "error",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading.off();
+    }
   };
 
   return (
@@ -71,7 +112,7 @@ const ModalEditEmployee = ({ data, isOpen, onClose }) => {
                 <Input
                   type="text"
                   name="fullName"
-                  defaultValue={data?.name}
+                  defaultValue={data?.fullName}
                   placeholder="John Doe"
                   required
                 />
@@ -84,6 +125,7 @@ const ModalEditEmployee = ({ data, isOpen, onClose }) => {
                   defaultValue={data?.email}
                   placeholder="johndoe@mail.com"
                   required
+                  isReadOnly={true}
                 />
               </FormControl>
               <FormControl id="phone">
@@ -109,7 +151,7 @@ const ModalEditEmployee = ({ data, isOpen, onClose }) => {
                 <FormLabel>Role</FormLabel>
                 <Select
                   name="role"
-                  defaultValue={data?.role}
+                  defaultValue={data?.role?.id}
                   placeholder="Select role"
                   required
                 >
@@ -147,7 +189,12 @@ const ModalEditEmployee = ({ data, isOpen, onClose }) => {
             </Stack>
           </ModalBody>
           <ModalFooter>
-            <Button type="submit" colorScheme="blue" mr={3}>
+            <Button
+              type="submit"
+              colorScheme="blue"
+              mr={3}
+              isLoading={isLoading}
+            >
               Save
             </Button>
             <Button onClick={onClose}>Cancel</Button>

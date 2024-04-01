@@ -22,7 +22,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import ModalDeleteEmployee from "../Modals/ModalDeleteEmployee";
 import ModalEditEmployee from "../Modals/ModalEditEmployee";
 
-const TableEmployee = ({ employees }) => {
+const TableEmployee = ({ employees, revalidateEmployees }) => {
   const {
     isOpen: isOpenModalDeleteEmployee,
     onOpen: onOpenModalDeleteEmployee,
@@ -134,6 +134,7 @@ const TableEmployee = ({ employees }) => {
         data={editedEmployee}
         isOpen={isOpenModalEditEmployee}
         onClose={handleCloseModalEditEmployee}
+        revalidateEmployees={revalidateEmployees}
       />
     </>
   );

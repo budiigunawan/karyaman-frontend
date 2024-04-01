@@ -76,7 +76,7 @@ const ModalCreateEmployee = ({ isOpen, onClose, revalidateEmployees }) => {
 
       if (response.data) {
         toast({
-          title: "Success add new employee",
+          title: response.data.message || "Employee created successfully",
           position: "top",
           status: "success",
           isClosable: true,

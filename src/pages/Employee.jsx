@@ -124,7 +124,10 @@ const Employee = () => {
         <Center minH="200px">
           {isLoading && <Spinner />}
           {!isLoading && employees?.data.length !== 0 && (
-            <TableEmployee employees={employees.data} />
+            <TableEmployee
+              employees={employees.data}
+              revalidateEmployees={revalidateEmployees}
+            />
           )}
           {!isLoading && errorMessage && <Text>{errorMessage}</Text>}
         </Center>

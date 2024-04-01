@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Text,
@@ -26,7 +26,7 @@ const Employee = () => {
   const [employees, setEmployees] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useBoolean(true);
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth();
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const {
@@ -81,6 +81,10 @@ const Employee = () => {
     }
   };
 
+  const isAdmin = useMemo(() => {
+    return user?.data?.isAdmin;
+  }, [user?.data?.isAdmin]);
+
   useEffect(() => {
     const getEmployees = async () => {
       try {
@@ -117,6 +121,7 @@ const Employee = () => {
             leftIcon={<FaPlus />}
             colorScheme="blue"
             onClick={onOpenModalCreateEmployee}
+            isDisabled={!isAdmin}
           >
             Employee
           </Button>

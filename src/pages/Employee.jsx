@@ -121,7 +121,7 @@ const Employee = () => {
             leftIcon={<FaPlus />}
             colorScheme="blue"
             onClick={onOpenModalCreateEmployee}
-            isDisabled={!isAdmin}
+            isDisabled={isLoading || !isAdmin}
           >
             Employee
           </Button>

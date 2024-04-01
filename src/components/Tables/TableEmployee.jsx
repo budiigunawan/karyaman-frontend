@@ -22,7 +22,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import ModalDeleteEmployee from "../Modals/ModalDeleteEmployee";
 import ModalEditEmployee from "../Modals/ModalEditEmployee";
 
-const TableEmployee = ({ data }) => {
+const TableEmployee = ({ employees }) => {
   const {
     isOpen: isOpenModalDeleteEmployee,
     onOpen: onOpenModalDeleteEmployee,
@@ -61,7 +61,7 @@ const TableEmployee = ({ data }) => {
   return (
     <>
       <TableContainer>
-        <Table variant='simple' colorScheme='blackAlpha'>
+        <Table variant="simple" colorScheme="blackAlpha">
           <Thead>
             <Tr>
               <Th>Full name</Th>
@@ -74,12 +74,12 @@ const TableEmployee = ({ data }) => {
             </Tr>
           </Thead>
           <Tbody>
-            {data.map((employee) => (
+            {employees?.map((employee) => (
               <Tr key={employee.id}>
                 <Td>
-                  <Flex gap={3} alignItems='center'>
-                    <Avatar name={employee.name} src='#' />
-                    <Text>{employee.name}</Text>
+                  <Flex gap={3} alignItems="center">
+                    <Avatar name={employee.fullName} src="#" />
+                    <Text>{employee.fullName}</Text>
                   </Flex>
                 </Td>
                 <Td>{employee.role}</Td>
@@ -99,9 +99,9 @@ const TableEmployee = ({ data }) => {
                   <Menu>
                     <MenuButton
                       as={IconButton}
-                      aria-label='options'
+                      aria-label="options"
                       icon={<BsThreeDotsVertical />}
-                      variant='outline'
+                      variant="outline"
                     />
                     <MenuList>
                       <MenuItem

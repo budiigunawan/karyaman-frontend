@@ -129,6 +129,7 @@ const TableEmployee = ({ employees, revalidateEmployees }) => {
         cancelRef={cancelRef}
         onClose={handleCloseModalDeleteEmployee}
         employeeId={deletedEmployeeId}
+        revalidateEmployees={revalidateEmployees}
       />
       <ModalEditEmployee
         data={editedEmployee}

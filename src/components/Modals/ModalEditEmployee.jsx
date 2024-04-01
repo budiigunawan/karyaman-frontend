@@ -197,7 +197,9 @@ const ModalEditEmployee = ({ data, isOpen, onClose, revalidateEmployees }) => {
             >
               Save
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose} isDisabled={isLoading}>
+              Cancel
+            </Button>
           </ModalFooter>
         </form>
       </ModalContent>

@@ -60,76 +60,82 @@ const TableAttendance = ({ data, revalidateAttendances, currentUser }) => {
 
   return (
     <>
-      <TableContainer>
-        <Table variant="simple" colorScheme="blackAlpha">
-          <Thead>
-            <Tr>
-              <Th>Full name</Th>
-              <Th>Role</Th>
-              <Th>Clock in</Th>
-              <Th>Point in</Th>
-              <Th>Clock out</Th>
-              <Th>Point out</Th>
-              <Th></Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {data.map((attendace) => (
-              <Tr key={attendace.id}>
-                <Td>
-                  <Flex gap={3} alignItems="center">
-                    <Avatar name={attendace.user.fullName} src="#" />
-                    <Text>{attendace.user.fullName}</Text>
-                  </Flex>
-                </Td>
-                <Td>{attendace.user.role.name}</Td>
-                <Td>{new Date(attendace.clockIn).toLocaleString("id-ID")}</Td>
-                <Td>
-                  {attendace.pointIn ? (
-                    <IconButton
-                      title="point in"
-                      colorScheme="blue"
-                      icon={<MdLocationPin />}
-                      onClick={() => handleOpenModalPoint(attendace, "in")}
-                    />
-                  ) : (
-                    ""
-                  )}
-                </Td>
-                <Td>
-                  {attendace.clockOut
-                    ? new Date(attendace.clockOut).toLocaleString("id-ID")
-                    : "-"}
-                </Td>
-                <Td>
-                  {attendace.pointOut ? (
-                    <IconButton
-                      title="point out"
-                      colorScheme="blue"
-                      icon={<MdLocationPin />}
-                      onClick={() => handleOpenModalPoint(attendace, "out")}
-                    />
-                  ) : (
-                    "-"
-                  )}
-                </Td>
-                <Td>
-                  <IconButton
-                    title="clock out"
-                    colorScheme="red"
-                    icon={<IoExit />}
-                    variant="outline"
-                    onClick={() => handleOpenModalClockOutAttendace(attendace)}
-                    isDisabled={
-                      !!attendace.clockOut || !isAuthor(attendace?.userId)
-                    }
-                  />
-                </Td>
+      {data.length > 0 ? (
+        <TableContainer>
+          <Table variant="simple" colorScheme="blackAlpha">
+            <Thead>
+              <Tr>
+                <Th>Full name</Th>
+                <Th>Role</Th>
+                <Th>Clock in</Th>
+                <Th>Point in</Th>
+                <Th>Clock out</Th>
+                <Th>Point out</Th>
+                <Th></Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
+            </Thead>
+            <Tbody>
+              {data.map((attendace) => (
+                <Tr key={attendace.id}>
+                  <Td>
+                    <Flex gap={3} alignItems="center">
+                      <Avatar name={attendace.user.fullName} src="#" />
+                      <Text>{attendace.user.fullName}</Text>
+                    </Flex>
+                  </Td>
+                  <Td>{attendace.user.role.name}</Td>
+                  <Td>{new Date(attendace.clockIn).toLocaleString("id-ID")}</Td>
+                  <Td>
+                    {attendace.pointIn ? (
+                      <IconButton
+                        title="point in"
+                        colorScheme="blue"
+                        icon={<MdLocationPin />}
+                        onClick={() => handleOpenModalPoint(attendace, "in")}
+                      />
+                    ) : (
+                      ""
+                    )}
+                  </Td>
+                  <Td>
+                    {attendace.clockOut
+                      ? new Date(attendace.clockOut).toLocaleString("id-ID")
+                      : "-"}
+                  </Td>
+                  <Td>
+                    {attendace.pointOut ? (
+                      <IconButton
+                        title="point out"
+                        colorScheme="blue"
+                        icon={<MdLocationPin />}
+                        onClick={() => handleOpenModalPoint(attendace, "out")}
+                      />
+                    ) : (
+                      "-"
+                    )}
+                  </Td>
+                  <Td>
+                    <IconButton
+                      title="clock out"
+                      colorScheme="red"
+                      icon={<IoExit />}
+                      variant="outline"
+                      onClick={() =>
+                        handleOpenModalClockOutAttendace(attendace)
+                      }
+                      isDisabled={
+                        !!attendace.clockOut || !isAuthor(attendace?.userId)
+                      }
+                    />
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <Text>Attendance is empty</Text>
+      )}
       <ModalAttendance
         isOpen={isOpenModalClockOutAttendance}
         onClose={handleCloseModalClockOutAttendace}

@@ -82,7 +82,7 @@ const TableEmployee = ({ employees }) => {
                     <Text>{employee.fullName}</Text>
                   </Flex>
                 </Td>
-                <Td>{employee.role}</Td>
+                <Td>{employee.role.name}</Td>
                 <Td>
                   <Tag colorScheme={employee.isActive ? "green" : "red"}>
                     {employee.isActive ? "Active" : "Inactive"}

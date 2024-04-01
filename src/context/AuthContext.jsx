@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
       };
 
       getRefreshToken();
-    }, 60 * 60 * 1000); // Refresh every 60 minutes
+    }, 55 * 60 * 1000); // Refresh every 60 minutes
 
     return () => clearInterval(interval);
   }, [apiUrl, refreshToken]);

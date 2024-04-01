@@ -23,7 +23,7 @@ const Employee = () => {
     page: 1,
     limit: 10,
   });
-  const [employees, setEmployees] = useState([]);
+  const [employees, setEmployees] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useBoolean(true);
   const { accessToken } = useAuth();
@@ -106,7 +106,7 @@ const Employee = () => {
         </HStack>
         <Center minH="200px">
           {isLoading && <Spinner />}
-          {!isLoading && employees.data.length !== 0 && (
+          {!isLoading && employees?.data.length !== 0 && (
             <TableEmployee employees={employees.data} />
           )}
           {!isLoading && errorMessage && <Text>{errorMessage}</Text>}

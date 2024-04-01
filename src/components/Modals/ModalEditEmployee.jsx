@@ -15,6 +15,25 @@ import {
 } from "@chakra-ui/react";
 
 const ModalEditEmployee = ({ data, isOpen, onClose }) => {
+  const roles = [
+    {
+      id: "096f8ab2-d904-4b57-8503-15bc40a40d4f",
+      name: "Developer",
+    },
+    {
+      id: "32607a46-06ae-4004-9d84-ec2b92a02083",
+      name: "Finance",
+    },
+    {
+      id: "4f032dae-88b0-40fc-8d0a-e268b288cb08",
+      name: "UI/UX Designer",
+    },
+    {
+      id: "c52eabfe-2a65-4c29-855b-042e8b37462e",
+      name: "Human Resources",
+    },
+  ];
+
   const handleEditEmployee = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -47,86 +66,88 @@ const ModalEditEmployee = ({ data, isOpen, onClose }) => {
         <form onSubmit={handleEditEmployee}>
           <ModalBody pb={6}>
             <Stack spacing={4}>
-              <FormControl id='fullName'>
+              <FormControl id="fullName">
                 <FormLabel>Full name</FormLabel>
                 <Input
-                  type='text'
-                  name='fullName'
+                  type="text"
+                  name="fullName"
                   defaultValue={data?.name}
-                  placeholder='John Doe'
+                  placeholder="John Doe"
                   required
                 />
               </FormControl>
-              <FormControl id='email'>
+              <FormControl id="email">
                 <FormLabel>Email</FormLabel>
                 <Input
-                  type='email'
-                  name='email'
+                  type="email"
+                  name="email"
                   defaultValue={data?.email}
-                  placeholder='johndoe@mail.com'
+                  placeholder="johndoe@mail.com"
                   required
                 />
               </FormControl>
-              <FormControl id='phone'>
+              <FormControl id="phone">
                 <FormLabel>Phone</FormLabel>
                 <Input
-                  type='tel'
-                  pattern='^\+?\d*$'
-                  name='phone'
+                  type="tel"
+                  pattern="^\+?\d*$"
+                  name="phone"
                   defaultValue={data?.phone}
-                  placeholder='+62123456789'
+                  placeholder="+62123456789"
                   required
                 />
               </FormControl>
-              <FormControl id='employed'>
+              <FormControl id="employed">
                 <FormLabel>Hired Date</FormLabel>
                 <Input
-                  type='date'
-                  name='employed'
+                  type="date"
+                  name="employed"
                   defaultValue={data?.employed?.substring(0, 10)}
                 />
               </FormControl>
-              <FormControl id='role'>
+              <FormControl id="role">
                 <FormLabel>Role</FormLabel>
                 <Select
-                  name='role'
+                  name="role"
                   defaultValue={data?.role}
-                  placeholder='Select role'
+                  placeholder="Select role"
                   required
                 >
-                  <option value='programmer'>Programmer</option>
-                  <option value='hr'>HR</option>
-                  <option value='finance'>Finance</option>
+                  {roles.map((role) => (
+                    <option key={role.id} value={role.id}>
+                      {role.name}
+                    </option>
+                  ))}
                 </Select>
               </FormControl>
-              <FormControl id='access'>
+              <FormControl id="access">
                 <FormLabel>Access</FormLabel>
                 <Select
-                  name='access'
+                  name="access"
                   defaultValue={data?.isAdmin}
-                  placeholder='Select access'
+                  placeholder="Select access"
                   required
                 >
-                  <option value='false'>User</option>
-                  <option value='true'>Admin</option>
+                  <option value="false">User</option>
+                  <option value="true">Admin</option>
                 </Select>
               </FormControl>
-              <FormControl id='status'>
+              <FormControl id="status">
                 <FormLabel>Access</FormLabel>
                 <Select
-                  name='status'
+                  name="status"
                   defaultValue={data?.isActive}
-                  placeholder='Select user status'
+                  placeholder="Select user status"
                   required
                 >
-                  <option value='true'>Active</option>
-                  <option value='false'>Inactive</option>
+                  <option value="true">Active</option>
+                  <option value="false">Inactive</option>
                 </Select>
               </FormControl>
             </Stack>
           </ModalBody>
           <ModalFooter>
-            <Button type='submit' colorScheme='blue' mr={3}>
+            <Button type="submit" colorScheme="blue" mr={3}>
               Save
             </Button>
             <Button onClick={onClose}>Cancel</Button>

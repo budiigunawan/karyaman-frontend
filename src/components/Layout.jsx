@@ -143,14 +143,14 @@ const MobileNav = ({ onOpen, hanldeLogout, user, ...rest }) => {
               _focus={{ boxShadow: "none" }}
             >
               <HStack>
-                <Avatar size={"md"} name={user?.fullName || "Jampes"} src="#" />
+                <Avatar size={"md"} name={user?.fullName || ""} src="#" />
                 <VStack
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">{user?.fullName || "Jampes"}</Text>
+                  <Text fontSize="sm">{user?.fullName || ""}</Text>
                   <Text fontSize="xs" color="gray.600">
                     {user?.isAdmin ? "Admin" : "Employee"}
                   </Text>
